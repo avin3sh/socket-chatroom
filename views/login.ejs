@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Welcome to TheChat, Login or Signup!</title>
+    
+    <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/css/style.css" rel="stylesheet">
+
+  </head>
+  <body>
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="row">
+
+				<div class="col-md-12" id="login-box">
+                
+                <form role="form" >
+				<div class="form-group">
+					 
+					<label for="exampleInputEmail1">
+						Email address
+					</label>
+					<input class="form-control" id="loginemail" type="email" name=loginemail placehold="Your email address.."/>
+				</div>
+				<div class="form-group">
+					 
+					<label for="exampleInputPassword1">
+						Password
+					</label>
+					<input class="form-control" id="loginpassword" type="password" name=loginpassword />
+				</div>
+								<button type="button" class="btn btn-success btn-lg" id="login-button">
+						Login
+					</button> 
+					<button type="button" class="btn btn-info btn-lg" id="register-button">
+						Register
+					</button>
+			</form>
+					
+					
+				</div>
+
+			</div>
+		</div>
+	</div>
+</div> 
+<script src="/assets/js/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+    $('#login-button').on('click',function(){
+
+        var logindata = {username: $('#loginemail').val(), password: $('#loginpassword').val()};
+
+        $.ajax({
+            type: 'POST',
+            url: '/auth/login',
+            data: logindata,
+            success: function(res){
+                $('body').html(res);
+            }
+            
+        });
+    });
+    
+    $('#register-button').on('click',function(){
+
+        var logindata = {username: $('#loginemail').val(), password: $('#loginpassword').val()};
+
+        $.ajax({
+            type: 'POST',
+            url: '/auth/register',
+            data: logindata,
+            success: function(res){
+                $('body').html(res);
+            }
+            
+        });
+    });
+
+});
+</script>
+</body>
+</html>

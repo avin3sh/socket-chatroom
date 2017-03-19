@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Welcome to the Chatroom</title>
+
+    <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/css/style.css" rel="stylesheet">
+
+  </head>
+  <body>
+
+<h1>Howdy, <%= postdata.loginUsername %>!</h1>
+
+<div class="list-group" id="rooms-list">
+  <a href="#" class="list-group-item active">
+    Choose a Chatroom
+  </a>
+  <% for(i= 0; i < chatroomdata.length; i++){ %>
+  <a href="#" class="list-group-item room-name"><li id="<%= chatroomdata[i].name %>" class="list-group-item"><%= chatroomdata[i].name %></li></a>
+
+  <% } %>
+</div>
+
+<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+<script>
+ $(".room-name").click(function(){
+    var roomName = $(this).text();
+    var postData = {roomname: roomName , username: '<%= postdata.loginUsername %>'};
+    $.ajax({
+        type: 'POST',
+        url: '/room',
+        data: postData,
+        success: function(data){
+          //do something with the data via front-end framework
+             $('body').html(data);
+        }
+      });
+
+
+ });
+</script>
+
+
+</body>
+</html>
