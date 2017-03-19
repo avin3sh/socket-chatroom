@@ -20,6 +20,6 @@ chatController(app, io);//passes everything app has to the controller
 
 //listen to a port
 console.log("The server is up and running on port 3000");
-//
+
 
  

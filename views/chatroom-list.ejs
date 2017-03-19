@@ -13,7 +13,7 @@
   </head>
   <body>
 
-<h1>Howdy, <%= postdata.loginUsername %>!</h1>
+<h1>Howdy, <%= Username.uname %>!</h1>
 
 <div class="list-group" id="rooms-list">
   <a href="#" class="list-group-item active">
@@ -29,7 +29,7 @@
 <script>
  $(".room-name").click(function(){
     var roomName = $(this).text();
-    var postData = {roomname: roomName , username: '<%= postdata.loginUsername %>'};
+    var postData = {roomname: roomName , username: '<%= Username.uname %>'};
     $.ajax({
         type: 'POST',
         url: '/room',
