@@ -24,10 +24,10 @@ $(function () {
     //xxx
     
     //Defines what to do when 'chat message' event is received - add new message(s) in the chat box
-    socket.on('chat message', function(msg){
+    socket.on('chat message', function(msg,susername){
         $('#chat-box').append(`
          <li class="list-group-item">
-            <span class="badge">`+msg.username+`</span>`+
+            <span class="badge">`+susername+`</span>`+
             msg.message+`
           </li>`);
     });
