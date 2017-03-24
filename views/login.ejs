@@ -41,6 +41,7 @@ $(document).ready(function(){
             data: logindata,
             success: function(res){
                 $('body').html(res);
+				document.title = "The Chat Project";
             }
             
         });

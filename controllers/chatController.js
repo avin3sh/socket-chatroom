@@ -3,6 +3,7 @@ var mongoose = require('mongoose');//for DB Connection
 var ioController = require('../controllers/ioController');//to handle all the socketio sent/receive activity happening after joing the room
 var loginController = require('../controllers/loginController');//to check and authenticate 
 var signupController = require('../controllers/signupController');//to check and allow registration for new user
+var logoutController = require('../controllers/logoutController');//handles logout op
 var cookie;//declared globally so that all the cookie info can be transfered as var to any calling function
 var isSocketAlreadyConnected = 0;//so that multiple socket connections are not there i.e. a message is not sent more than once due to user rejoining the same room and initiating yet another io() 
 
@@ -87,6 +88,10 @@ module.exports = function (app, io, Cookie) {
 
     app.post('/auth/register', urlencodedParser, function (req, res) {
         signupController(req, res, Users, Chatroom);
+    });
+
+    app.get('/auth/logout', urlencodedParser, function (req, res) {
+        logoutController(req, res);
     });
 
 
