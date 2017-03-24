@@ -2,20 +2,20 @@
 			<!-- middle area -->
 			<div class="row">
 				<div class="col-md-4" id="login-box">
-					 <form role="form" >
+					 <form role="form" id="common-welcome-form" method="POST" action="" >
 				<div class="form-group">
 					 
 					<label for="exampleInputEmail1">
 						Email address
 					</label>
-					<input class="form-control" id="loginemail" type="email" name=loginemail placehold="Your email address.."/>
+					<input class="form-control" id="loginemail" type="email" name=username placehold="Your email address.."/>
 				</div>
 				<div class="form-group">
 					 
 					<label for="exampleInputPassword1">
 						Password
 					</label>
-					<input class="form-control" id="loginpassword" type="password" name=loginpassword />
+					<input class="form-control" id="loginpassword" type="password" name=password />
 				</div>
 								<button type="button" class="btn btn-success btn-lg" id="login-button">
 						Login
@@ -33,6 +33,7 @@
 <script>
 $(document).ready(function(){
     $('#login-button').on('click',function(){
+		/*
         var logindata = {username: $('#loginemail').val(), password: $('#loginpassword').val()};
 
         $.ajax({
@@ -45,6 +46,9 @@ $(document).ready(function(){
             }
             
         });
+		*/
+		$("#common-welcome-form").attr("action","/auth/login");
+		$("#common-welcome-form").submit();
     });
     
     $('#register-button').on('click',function(){
