@@ -31,20 +31,22 @@ var Chats = mongoose.model('chats', chatsSchema);
 var Users = mongoose.model('users', usersSchema);
 //xxx
 
-module.exports = function (app, io) {
+module.exports = function (app, io, Cookie) {
+    ioController(io, Chats, Cookie);//once login is successful, an io connection established
 
     //handles main page, where user is forced to choose a username
     app.get('/', function (req, res) {
+        var loginejsmetadata = { title: 'Login Portal' }; //to pass some generic vars to ejs template of login
         cookie = req.cookies.username;//retrieves cookie info of the user(if available)
         var Username = { uname: req.cookies.username };//get cookie value for "username"
         if (!cookie) {//if !cookie it means the user has not been autheticated, show him the login page instead
-            res.render('login');//display login page if cookie is absent i.e. user is logged out
+            res.render('login', { meta: loginejsmetadata });//display login page if cookie is absent i.e. user is logged out
         } else {
             Chatroom.find({}, function (err, data) {
                 if (err) throw err;
                 //console.log(data);
-                res.render('chatroom-list', { Username: Username, chatroomdata: data }); //passing post variable from login page, namely username to the main chatroom page along with db result
-                console.log(cookie);
+                var crlistejsmetadata = { title: 'TheChat Project' }; //to pass some generic vars to ejs template of chatroom-list
+                res.render('chatroom-list', { meta: crlistejsmetadata, Username: Username, chatroomdata: data }); //passing post variable from login page, namely username to the main chatroom page along with db result
             });
         }
     });
@@ -59,20 +61,20 @@ module.exports = function (app, io) {
     });
 */
     app.post('/room', urlencodedParser, function (req, res) {
-        cookie = req.cookies.username;
-
-        //console.log(req.body.roomname);
         if (!cookie) {
             res.send(`<a href="/">Click here</a> to login`);
         } else {
             Chats.find({ room: req.body.roomname }).sort({ time: 1 }).exec(function (err, data) {
+                var roomejsmetadata = {title : 'Welcome to the '+req.body.roomname+' chat room'};
                 if (err) throw err;
-                console.log(data);
-                res.render('chatroom', { postdata: req.body, chatdata: data });
-                if(isSocketAlreadyConnected===0){
-                ioController(app, io, cookie, Chats);
-                    isSocketAlreadyConnected=1;
-                }
+                //console.log(data);
+                //if(isSocketAlreadyConnected===0){
+                //if (!req.cookies.firstlogin) {
+                //ioController(app, io, cookie, Chats);//handles all io activity that occurs once the room has been joined
+                    //res.cookie('firstlogin', 1);
+                //}
+                res.render('chatroom', { meta: roomejsmetadata, postdata: req.body, chatdata: data });
+
             });
         }
     });
@@ -80,12 +82,11 @@ module.exports = function (app, io) {
     //ioController(app, io, cookie);//manages all the socket.io activities
 
     app.post('/auth/login', urlencodedParser, function (req, res) {
-        loginController(req, res, Users, app, Chatroom);
-
+        loginController(req, res, Users, Chatroom, cookie);
     });
 
     app.post('/auth/register', urlencodedParser, function (req, res) {
-        signupController(req, res, Users, app, Chatroom);
+        signupController(req, res, Users, Chatroom);
     });
 
 

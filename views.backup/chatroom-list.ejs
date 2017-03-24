@@ -1,9 +1,19 @@
-<%- include('header'); %>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-			<!-- middle area -->
-			<div class="row">
-				<div class="col-md-8">
-					<h1>Howdy, <%= Username.uname %>!</h1>
+    <title>Welcome to the Chatroom</title>
+
+    <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/css/style.css" rel="stylesheet">
+
+  </head>
+  <body>
+
+<h1>Howdy, <%= Username.uname %>!</h1>
 
 <div class="list-group" id="rooms-list">
   <a href="#" class="list-group-item active">
@@ -14,40 +24,6 @@
 
   <% } %>
 </div>
-
-				</div>
-				<div class="col-md-4">
-					<ul>
-						<li>
-							Lorem ipsum dolor sit amet
-						</li>
-						<li>
-							Consectetur adipiscing elit
-						</li>
-						<li>
-							Integer molestie lorem at massa
-						</li>
-						<li>
-							Facilisis in pretium nisl aliquet
-						</li>
-						<li>
-							Nulla volutpat aliquam velit
-						</li>
-						<li>
-							Faucibus porta lacus fringilla vel
-						</li>
-						<li>
-							Aenean sit amet erat nunc
-						</li>
-						<li>
-							Eget porttitor lorem
-						</li>
-					</ul>
-				</div>
-			</div>
-			<!-- middle area end -->
-
-
 
 <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
 <script>
@@ -68,5 +44,6 @@
  });
 </script>
 
-<% include footer %>
 
+</body>
+</html>

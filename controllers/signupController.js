@@ -1,4 +1,4 @@
-module.exports = function(req, res, Users, app){
+module.exports = function(req, res, Users){
     console.log("Signup request received");
     var username = req.body.username;
     var pass = req.body.password;
