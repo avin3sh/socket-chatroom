@@ -1,5 +1,10 @@
 $(function () {
+    var autoscroll = function(){
+        $("#chat-box").scrollTop($("#chat-box")[0].scrollHeight);
+    };
+
     var socket = io();
+    autoscroll();//autoscrolls to bottom on first laod
     //register with room when entered for the first time
     socket.emit('join room', { roomname: $('#sendChatroomName').val(), username: $('#sendUsername').val() });
     //xxx
@@ -34,8 +39,8 @@ $(function () {
             <span class="badge">`+ susername + `</span>` +
             msg.message + `
           </li>`);
-        $('#chat-box').scrollTop($('#chat-box').attr("scrollHeight"));//scroll to bottom upon receiving message
-
+          
+          autoscroll();//scrolls to bottom on new message arrival
     });
     //xxx
 }); 
