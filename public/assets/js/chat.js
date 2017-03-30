@@ -1,12 +1,14 @@
 $(function () {
-    var autoscroll = function(){
+    var autoscroll = function () {
         $("#chat-box").scrollTop($("#chat-box")[0].scrollHeight);
     };
 
     var socket = io();
-    autoscroll();//autoscrolls to bottom on first laod
     //register with room when entered for the first time
-    socket.emit('join room', { roomname: $('#sendChatroomName').val(), username: $('#sendUsername').val() });
+    if ($('#sendChatroomName').val() !== undefined) {
+        socket.emit('join room', { roomname: $('#sendChatroomName').val(), username: $('#sendUsername').val() });
+        autoscroll();//autoscrolls to bottom on first laod
+    }
     //xxx
 
     //Defines the function which will be executed every time a message has to be sent to the server
@@ -39,8 +41,8 @@ $(function () {
             <span class="badge">`+ susername + `</span>` +
             msg.message + `
           </li>`);
-          
-          autoscroll();//scrolls to bottom on new message arrival
+
+        autoscroll();//scrolls to bottom on new message arrival
     });
     //xxx
 }); 
