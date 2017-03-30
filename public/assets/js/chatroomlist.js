@@ -23,7 +23,10 @@ $(function () {
                 data: postData,
                 success: function (data) {
                     //do something with the data via front-end framework
-                    $('body').html(data);
+                    //$('html').html(data);
+                    document.open();
+                    document.write(data);
+                    document.close();
                 }
             });
         });
