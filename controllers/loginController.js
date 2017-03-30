@@ -8,7 +8,7 @@ module.exports = function (req, res, Users, Chatroom, cookie) {
     Users.count({ username: username, password: pass }, function (err, data) {
         if (data === 1) {
             console.log("Login success for " + username);
-            res.cookie('username', username, { maxAge: 9999 }); 
+            res.cookie('username', username); 
             cookie = req.cookies.username;
 
             var loginusername = { uname: username };
