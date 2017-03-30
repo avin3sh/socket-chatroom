@@ -6,7 +6,7 @@ $(function () {
 
     //Defines the function which will be executed every time a message has to be sent to the server
     var emitFunction = function () {
-        if ($('#sendMsgfield').val() !== '' || $('#sendMsgfield').val() !== ' ') {
+        if ($.trim($('#sendMsgfield').val()) !== "" || $.trim($('#sendMsgfield').val()) !== "") {
             socket.emit('chat message', { username: $('#sendUsername').val(), message: $('#sendMsgfield').val(), room: $('#sendChatroomName').val() });
             var d = $('#chat-box');
             var actualh = d.prop("scrollHeight");
