@@ -48,12 +48,12 @@ module.exports = function (app, io, Cookie) {
         if (cookie === undefined) {//if cookie is undefined it means the user has not been autheticated, show him the login page instead
             res.render('login', { meta: loginejsmetadata });//display login page if cookie is absent i.e. user is logged out
         } else {
-            Chatroom.find({}, function (err, data) {
-                if (err) throw err;
-                //console.log(data);
-                var crlistejsmetadata = { title: 'TheChat Project' }; //to pass some generic vars to ejs template of chatroom-list
-                res.render('chatroom-list', { meta: crlistejsmetadata, Username: Username, chatroomdata: data }); //passing post variable from login page, namely username to the main chatroom page along with db result
-            });
+            // Chatroom.find({}, function (err, data) {
+            //if (err) throw err;
+            //console.log(data);
+            var crlistejsmetadata = { title: 'TheChat Project' }; //to pass some generic vars to ejs template of chatroom-list
+            res.render('chatroom-list', { meta: crlistejsmetadata, Username: Username }); //passing post variable from login page, namely username to the main chatroom page along with db result
+            //});
         }
     });
 
@@ -62,7 +62,7 @@ module.exports = function (app, io, Cookie) {
             res.send(`<a href="/">Click here</a> to login`);
         } else {
             Chats.find({ room: req.body.roomname }).sort({ time: 1 }).exec(function (err, data) {
-                var roomejsmetadata = {title : 'Welcome to the '+req.body.roomname+' chat room'};
+                var roomejsmetadata = { title: 'Welcome to the ' + req.body.roomname + ' chat room' };
                 if (err) throw err;
                 res.render('chatroom', { meta: roomejsmetadata, postdata: req.body, chatdata: data });
             });

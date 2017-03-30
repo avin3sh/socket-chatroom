@@ -3,7 +3,9 @@
 module.exports = function (io, Chats, Cookie, Userscount, Chatroom) {//stores  io var and collection dbs received from main chatController
 
     io.on('connection', function (socket) {//Everything from this point happens as long as there is a socket connection between the client and server
-        var cookies;//this will store cookie info retrieved from socket handshake method 
+        var cookies;//this will store cookie info retrieved from socket handshake method
+        if (Cookie.parse(socket.handshake.headers.cookie) !== undefined)
+            cookies = Cookie.parse(socket.handshake.headers.cookie);
         console.log('a user connected');//every time a 'connection' event occurs, it basically means someone joined the server
 
         //defines what happens when a 'disconnect' event occurs aka when a user leaves the server
@@ -48,13 +50,17 @@ module.exports = function (io, Chats, Cookie, Userscount, Chatroom) {//stores  i
         socket.on('get-room-count', function () {//get-room-count is sent by client when its on main chatroom-list.ejs page
             Chatroom.find({}, function (err, data) {//we search for db for ALL the rooms
                 var roomcount;
+                var roomobj;
+                var roomsarray = [];
                 for (var i = 0; i < data.length; i++) {//then for each room we run a for loop 
                     roomcount = io.sockets.adapter.rooms[data[i].name];//this method gives us number of clients in a room
                     if (roomcount === undefined) {//if room has no client, undefined would be returned, in that case 
                         roomcount = [];//we would want to send a zero 
                     }
-                    socket.emit('set-room-count', { roomname: data[i].name, count: roomcount.length });//we send the client info regarding each room with its user count
+                    roomobj = { roomname: data[i].name, count: roomcount.length };//then we create an object with roomname and count of users inside that room, for the given room
+                    roomsarray.push(roomobj);//and push that object to the array of rooms
                 }
+                socket.emit('set-room-count', { data: roomsarray, username: cookies.username });//we send the client a data var containing array of room info and a username var containing parsed username from socket handshake
             });
         });
         //xxx
