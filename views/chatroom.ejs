@@ -1,66 +1,68 @@
 <% include header %>
-<!--
+    <!--
 
--->    
-    			<!-- middle area -->
-			<div class="row">
-				<div class="col-md-8">
-					
-					  <div class="panel panel-primary" id="chatroom-panel">
-    <div class="panel-heading">
-      <h3 class="panel-title">Welcome to <%= postdata.roomname %></h3>
-    </div>
-    <div class="panel-body" id="chat-box-body">
-      
+-->
+    <!-- middle area -->
+    <div class="row">
+        <div class="col-md-8">
 
-      <ul class="list-group" id="chat-box">
-        <% for(i=0; i < chatdata.length; i++){ %>
-          <li class="list-group-item">
-            <span class="badge"><%= chatdata[i].username %></span>
-            <%= chatdata[i].message %>
-          </li>
-          <% } %>
-        </ul>
-        <div id="chat-input">
-            <input type="hidden" id="sendUsername" value="<%= postdata.username %>" name=username>
-            <input type="hidden" id="sendChatroomName" value="<%= postdata.roomname %>" name=chatroomName>
-            <input class="form-control" placeholder="Type your message..." type="text" name="sendMsgTxt" id="sendMsgfield">
-            <button id="sendMsgButton">Send</button>
+            <div class="panel panel-primary" id="chatroom-panel">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Welcome to
+                        <%= postdata.roomname %>
+                    </h3>
+                </div>
+                <div class="panel-body" id="chat-box-body">
+
+
+                    <ul class="list-group" id="chat-box">
+                        <% for(i=0; i < chatdata.length; i++){ %>
+                            <li class="list-group-item">
+                                <span class="badge"><%= chatdata[i].username %></span>
+                                <%= chatdata[i].message %>
+                            </li>
+                            <% } %>
+                    </ul>
+                    <div id="chat-input">
+                        <input type="hidden" id="sendUsername" value="<%= postdata.username %>" name=username>
+                        <input type="hidden" id="sendChatroomName" value="<%= postdata.roomname %>" name=chatroomName>
+                        <input class="form-control" placeholder="Type your message..." type="text" name="sendMsgTxt" id="sendMsgfield">
+                        <button id="sendMsgButton">Send</button>
+                    </div>
+                    <div id="status-messages">
+                        <strong><span id="status-text"></span></strong>
+                    </div>
+                </div>
+            </div></div>
+            <div class="col-md-4">
+                <ul>
+                    <li>
+                        Lorem ipsum dolor sit amet
+                    </li>
+                    <li>
+                        Consectetur adipiscing elit
+                    </li>
+                    <li>
+                        Integer molestie lorem at massa
+                    </li>
+                    <li>
+                        Facilisis in pretium nisl aliquet
+                    </li>
+                    <li>
+                        Nulla volutpat aliquam velit
+                    </li>
+                    <li>
+                        Faucibus porta lacus fringilla vel
+                    </li>
+                    <li>
+                        Aenean sit amet erat nunc
+                    </li>
+                    <li>
+                        Eget porttitor lorem
+                    </li>
+                </ul>
+            </div>
         </div>
-        <div id="status-messages">
-            <strong><span id="status-text"></span></strong>
-        </div>
-    </div>
-				</div>
-				<div class="col-md-4">
-					<ul>
-						<li>
-							Lorem ipsum dolor sit amet
-						</li>
-						<li>
-							Consectetur adipiscing elit
-						</li>
-						<li>
-							Integer molestie lorem at massa
-						</li>
-						<li>
-							Facilisis in pretium nisl aliquet
-						</li>
-						<li>
-							Nulla volutpat aliquam velit
-						</li>
-						<li>
-							Faucibus porta lacus fringilla vel
-						</li>
-						<li>
-							Aenean sit amet erat nunc
-						</li>
-						<li>
-							Eget porttitor lorem
-						</li>
-					</ul>
-				</div>
-			</div>
-			<!-- middle area end -->
+        <!-- middle area end -->
 
-<% include footer %>
+        <% include footer %>
