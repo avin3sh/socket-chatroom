@@ -26,21 +26,26 @@ var usersSchema = new mongoose.Schema({
     username: { type: String, lowercase: true, unique: true, required: true },
     password: { type: String, required: true }
 });
+var userscountSchema = new mongoose.Schema({
+    username: { type: String, lowercase: true, unique: true, required: true },
+    room: { type: String, required: true }
+});
 //defining model
 var Chatroom = mongoose.model('chatrooms', chatroomSchema);//'chatrooms' name of collection based on 'chatroomSchema' which will get stored in db
 var Chats = mongoose.model('chats', chatsSchema);
 var Users = mongoose.model('users', usersSchema);
+var Userscount = mongoose.model('userscount', userscountSchema, 'userscount');//because Mongoose wanna be smart, have to force it not use plural by providing the last argument as explicit collection name
 //xxx
 
 module.exports = function (app, io, Cookie) {
-    ioController(io, Chats, Cookie);//once login is successful, an io connection established
+    ioController(io, Chats, Cookie, Userscount);//once login is successful, an io connection established
 
     //handles main page, where user is forced to choose a username
     app.get('/', function (req, res) {
         var loginejsmetadata = { title: 'Login Portal' }; //to pass some generic vars to ejs template of login
         cookie = req.cookies.username;//retrieves cookie info of the user(if available)
         var Username = { uname: req.cookies.username };//get cookie value for "username"
-        if (!cookie) {//if !cookie it means the user has not been autheticated, show him the login page instead
+        if (cookie === undefined) {//if !cookie it means the user has not been autheticated, show him the login page instead
             res.render('login', { meta: loginejsmetadata });//display login page if cookie is absent i.e. user is logged out
         } else {
             Chatroom.find({}, function (err, data) {

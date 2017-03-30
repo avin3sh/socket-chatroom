@@ -1,8 +1,9 @@
 //Handles all the SOCKETIO sent/received/emit events separate from main chatController
 
-module.exports = function (io, Chats, Cookie) {//stores  io var and Chats db received from main chatController, loginusername is receives from established cookie
+module.exports = function (io, Chats, Cookie, Userscount) {//stores  io var and Chats db received from main chatController, loginusername is receives from established cookie
 
     io.on('connection', function (socket) {//Everything from this point happens as long as there is a socket connection between the client and server
+        var cookies = Cookie.parse(socket.handshake.headers.cookie);
         console.log('a user connected');//every time a 'connection' event occurs, it basically means someone joined the server
         //console.log("The obtained username is : " + loginusername);
         //console.log("The client headers are: "+Cookie.parse(socket.handshake.headers.cookie));
@@ -10,6 +11,9 @@ module.exports = function (io, Chats, Cookie) {//stores  io var and Chats db rec
         //defines what happens when a 'disconnect' event occurs aka when a user leaves the server
         socket.on('disconnect', function () {
             console.log('user disconnected');
+            Userscount.find({ username: cookies.username }).remove(function (err) {
+                console.log("User removed from the db");
+            });//deletes record from active users collection 'userscount'
         });
         //xxx
 
@@ -18,8 +22,10 @@ module.exports = function (io, Chats, Cookie) {//stores  io var and Chats db rec
             console.log('room register request received ' + data.roomname);
             if (data.roomname != undefined) {
                 socket.join(data.roomname);
-                //console.log(loginusername + ' registered in room ' + data.roomname);
-
+                Userscount({ username: cookies.username, room: data.roomname }).save(function (err, data) {
+                    if(err) console.log(err);
+                    console.log(cookies.username+" added in the db");
+                });//Insert a record in userscount collection when a user enter a room(to show number of active users in a room)
             }//registers the client with the room it entered
         });
         //xxx
