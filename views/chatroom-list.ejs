@@ -10,7 +10,7 @@
     Choose a Chatroom
   </a>
   <% for(i= 0; i < chatroomdata.length; i++){ %>
-  <a href="#" class="list-group-item room-name"><li id="<%= chatroomdata[i].name %>" class="list-group-item"><%= chatroomdata[i].name %></li></a>
+  <a href="#" class="list-group-item room-name" id="<%= chatroomdata[i].name %>"><li id="<%= chatroomdata[i].name %>" class="list-group-item"><%= chatroomdata[i].name %></li></a>
 
   <% } %>
 </div>
@@ -52,7 +52,7 @@
 <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
 <script>
  $(".room-name").click(function(){
-    var roomName = $(this).text();
+    var roomName = $(this).attr("id");
     var postData = {roomname: roomName , username: '<%= Username.uname %>'};
     $.ajax({
         type: 'POST',
@@ -66,7 +66,9 @@
 
 
  });
+
 </script>
+<script src="/assets/js/chatroomlist.js"></script>
+
 
 <% include footer %>
-

@@ -38,7 +38,7 @@ var Userscount = mongoose.model('userscount', userscountSchema, 'userscount');//
 //xxx
 
 module.exports = function (app, io, Cookie) {
-    ioController(io, Chats, Cookie, Userscount);//once login is successful, an io connection established
+    ioController(io, Chats, Cookie, Userscount, Chatroom);//once login is successful, an io connection established
 
     //handles main page, where user is forced to choose a username
     app.get('/', function (req, res) {

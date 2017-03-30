@@ -1,6 +1,6 @@
 //Handles all the SOCKETIO sent/received/emit events separate from main chatController
 
-module.exports = function (io, Chats, Cookie, Userscount) {//stores  io var and Chats db received from main chatController, loginusername is receives from established cookie
+module.exports = function (io, Chats, Cookie, Userscount, Chatroom) {//stores  io var and Chats db received from main chatController, loginusername is receives from established cookie
 
     io.on('connection', function (socket) {//Everything from this point happens as long as there is a socket connection between the client and server
         var cookies;
@@ -42,6 +42,23 @@ module.exports = function (io, Chats, Cookie, Userscount) {//stores  io var and 
             Chats({ username: msg.username, message: msg.message, time: Date(), room: msg.room }).save(function (err, data) {
                 //console.log("Inserted in db "+ msg);
             });
+
+        });
+        //xxx
+
+        //function to provide number of users in a chatroom on chatroomlist page
+        socket.on('get-room-count', function () {
+            Chatroom.find({}, function (err, data) {
+                var roomcount;
+                for (var i = 0; i < data.length; i++) {
+                    roomcount = io.sockets.adapter.rooms[data[i].name];
+                    if (roomcount === undefined) {
+                        roomcount = [];
+                    }
+                    socket.emit('set-room-count', { roomname: data[i].name, count: roomcount.length });
+                }
+            });
+
         });
         //xxx
 
