@@ -4,8 +4,6 @@ module.exports = function (io, Chats, Cookie, Userscount, Chatroom) {//stores  i
 
     io.on('connection', function (socket) {//Everything from this point happens as long as there is a socket connection between the client and server
         var cookies;//this will store cookie info retrieved from socket handshake method
-        if (Cookie.parse(socket.handshake.headers.cookie) !== undefined)
-            cookies = Cookie.parse(socket.handshake.headers.cookie);
         console.log('a user connected');//every time a 'connection' event occurs, it basically means someone joined the server
 
         //defines what happens when a 'disconnect' event occurs aka when a user leaves the server
@@ -48,6 +46,7 @@ module.exports = function (io, Chats, Cookie, Userscount, Chatroom) {//stores  i
 
         //function to provide number of users in a chatroom on chatroomlist page
         socket.on('get-room-count', function () {//get-room-count is sent by client when its on main chatroom-list.ejs page
+            cookies = Cookie.parse(socket.handshake.headers.cookie);//parsing cookies
             Chatroom.find({}, function (err, data) {//we search for db for ALL the rooms
                 var roomcount;
                 var roomobj;
