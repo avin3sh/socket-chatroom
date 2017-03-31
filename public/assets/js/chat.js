@@ -2,6 +2,7 @@ $(function () {
     var autoscroll = function () {
         $("#chat-box").scrollTop($("#chat-box")[0].scrollHeight);
     };
+    var audio = document.querySelector('audio');
 
     var socket = io();
     //register with room when entered for the first time
@@ -55,8 +56,8 @@ $(function () {
     //whe user (re)enters the room for the first time/again, an array of data with list of users already in the room is supplied
     socket.on('sidebar-data-firstload', function (data) {
         console.log(data.length);
-        if(data.length!==0){
-            for(var i=0; i<data.length; i++){
+        if (data.length !== 0) {
+            for (var i = 0; i < data.length; i++) {
                 $('.chatroom-sidebar').append(`<li class="list-group-item sidebar-username" id='sidebar-` + data[i].username + `'>` + data[i].username + `</li>`);
             }
         }
@@ -64,8 +65,49 @@ $(function () {
     //xxx
 
     //if a user disconnects, remove him from sidebar
-    socket.on('remove-sidebar-user', function(data){
-        $('#sidebar-'+data.username).remove();
+    socket.on('remove-sidebar-user', function (data) {
+        $('#sidebar-' + data.username).remove();
     });
     //
+
+
+    //webrtc stufcc
+
+    // Put variables in global scope to make them available to the browser console.
+    var constraints = { audio: true };
+
+    $('#toggle-rtc').on('click', function () {
+        navigator.mediaDevices.getUserMedia(constraints).then(function (mediaStream) {
+            var mediaRecorder = new MediaRecorder(mediaStream);
+            mediaRecorder.onstart = function (e) {
+                this.chunks = [];
+            };
+            mediaRecorder.ondataavailable = function (e) {
+                this.chunks.push(e.data);
+            };
+            mediaRecorder.onstop = function (e) {
+                var blob = new Blob(this.chunks, { 'type': 'audio/ogg; codecs=opus' });
+                socket.emit('radio', blob, { roomname: $('#sendChatroomName').val() });
+                console.log("Emitting to server");
+                mediaRecorder.start();
+
+            };
+
+            // Start recording
+            mediaRecorder.start();
+
+            // Stop recording after 5 seconds and broadcast it to server
+            setInterval(function () {
+                mediaRecorder.stop()
+            }, 1000);
+        });
+    });
+
+    socket.on('voice', function (arrayBuffer) {
+        console.log("received at client, playing");
+        var blob = new Blob([arrayBuffer], { 'type': 'audio/ogg; codecs=opus' });
+        var audio = document.createElement('audio');
+        audio.src = window.URL.createObjectURL(blob);
+        audio.play();
+    });
 }); 

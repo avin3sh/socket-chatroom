@@ -13,7 +13,7 @@ module.exports = function (io, Chats, Cookie, Userscount, Chatroom) {//stores  i
                 Userscount.find({ username: cookies.username }).remove(function (err) {//removes the username from Usercount db collection once socket is disconnected 
                     console.log("User removed from the db");
                 });//deletes record from active users collection 'userscount'
-                io.emit('remove-sidebar-user', {username: cookies.username});//ask all the clients in all the rooms to remove the disconnected user from the sidebar
+                io.emit('remove-sidebar-user', { username: cookies.username });//ask all the clients in all the rooms to remove the disconnected user from the sidebar
             }
         });
         //xxx
@@ -30,12 +30,12 @@ module.exports = function (io, Chats, Cookie, Userscount, Chatroom) {//stores  i
                     if (err) console.log(err);
                     console.log(cookies.username + " added in the db");
                 });//Insert a record in userscount collection when a user enter a room(to show number of active users in a room)
-                
+
                 //since user is entering first time, he also needs list of people already in the room
                 Userscount.find({ room: data.roomname }).sort({ time: 1 }).exec(function (err, data) {
                     socket.emit('sidebar-data-firstload', data);
                 });
-                
+
                 io.to(data.roomname).emit('user-joined', { username: cookies.username });//sends name of the user to all the clients of the room when the user joins
 
             }//registers the client with the room it entered
@@ -73,5 +73,11 @@ module.exports = function (io, Chats, Cookie, Userscount, Chatroom) {//stores  i
         });
         //xxx
 
+
+        //implementing webrtc
+        socket.on('radio', function (blob,data) {
+            console.log("received at server, emitting to client");
+            socket.broadcast.to(data.roomname).emit('voice', blob);
+        });
     });
 }; 
