@@ -45,4 +45,27 @@ $(function () {
         autoscroll();//scrolls to bottom on new message arrival
     });
     //xxx
+
+    //defines what to do when a user joins a room
+    socket.on('user-joined', function (data) {
+        $('.chatroom-sidebar').append(`<li class="list-group-item sidebar-username" id='sidebar-` + data.username + `'>` + data.username + `</li>`);
+    });
+    //xxx
+
+    //whe user (re)enters the room for the first time/again, an array of data with list of users already in the room is supplied
+    socket.on('sidebar-data-firstload', function (data) {
+        console.log(data.length);
+        if(data.length!==0){
+            for(var i=0; i<data.length; i++){
+                $('.chatroom-sidebar').append(`<li class="list-group-item sidebar-username" id='sidebar-` + data[i].username + `'>` + data[i].username + `</li>`);
+            }
+        }
+    });
+    //xxx
+
+    //if a user disconnects, remove him from sidebar
+    socket.on('remove-sidebar-user', function(data){
+        $('#sidebar-'+data.username).remove();
+    });
+    //
 }); 

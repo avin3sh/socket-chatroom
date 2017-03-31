@@ -28,7 +28,8 @@ var usersSchema = new mongoose.Schema({
 });
 var userscountSchema = new mongoose.Schema({
     username: { type: String, lowercase: true, unique: true, required: true },
-    room: { type: String, required: true }
+    room: { type: String, required: true },
+    time: Date
 });
 //defining model
 var Chatroom = mongoose.model('chatrooms', chatroomSchema);//'chatrooms' name of collection based on 'chatroomSchema' which will get stored in db
@@ -36,6 +37,10 @@ var Chats = mongoose.model('chats', chatsSchema);
 var Users = mongoose.model('users', usersSchema);
 var Userscount = mongoose.model('userscount', userscountSchema, 'userscount');//because Mongoose wanna be smart, have to force it not use plural by providing the last argument as explicit collection name
 //xxx
+
+Userscount.find({}).remove(function (err) {//removes the username from Usercount db collection once socket is disconnected 
+    console.log("Server restarted, cleared active user collection");
+});
 
 module.exports = function (app, io, Cookie) {
     ioController(io, Chats, Cookie, Userscount, Chatroom);//An io connection established for once; Chats, Userscount, Chatroom are some of the db collections we are passing because ioController might add to or retrieve from them 
