@@ -63,14 +63,11 @@ module.exports = function (app, io, Cookie) {
     });
 
     app.post('/room', urlencodedParser, function (req, res) {
-        if (!cookie) {
+        if (!cookie) {//this probably means the user is not logged in and sent a post request for room entry
             res.send(`<a href="/">Click here</a> to login`);
         } else {
-            //Chats.find({ room: req.body.roomname }).sort({ time: -1}).limit(7).exec(function (err, data) {//shows last 7 records
             var roomejsmetadata = { title: 'Welcome to the ' + req.body.roomname + ' chat room' };
-            //  if (err) throw err;
-            res.render('chatroom', { meta: roomejsmetadata, postdata: req.body });
-            // });
+            res.render('chatroom', { meta: roomejsmetadata, postdata: req.body });//renders chatroom template upon receiving request for the room entry but doesn't populate(it is done by socket)
         }
     });
 

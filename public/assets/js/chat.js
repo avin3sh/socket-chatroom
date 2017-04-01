@@ -1,24 +1,24 @@
 $(function () {
-    var autoscroll = function () {
+    var autoscroll = function () {//function to autoscroll to bottom of the chat
         $("#chat-box").scrollTop($("#chat-box")[0].scrollHeight);
     };
-    var audio = document.querySelector('audio');
+    var audio = document.querySelector('audio');//identifying(and selecting) audio tag element which plays audio during audio chat
 
     var socket = io();
     //register with room when entered for the first time
-    if ($('#sendChatroomName').val() !== undefined) {
+    if ($('#sendChatroomName').val() !== undefined) {//Since function is automatically being called, we need to make sure we actually emit this call in  a legal room
         socket.emit('join room', { roomname: $('#sendChatroomName').val(), username: $('#sendUsername').val() });
         autoscroll();//autoscrolls to bottom on first laod
     }
     //xxx
 
     //populates room
-    socket.on('populate-room', function (data) {
+    socket.on('populate-room', function (data) {//on entry the room is a bare room template with no data, after verifying with server, we receive chat data as well as other stuff which populates the page with info
         console.log("received data " + data.roomname);
         $('#room-title').append("Welcome to " + data.roomname);
         var cookieusername = data.cookieusername;
         $('#sendUsername').attr('value', cookieusername);
-        for (var i = data.chats.length - 1; i >= 0; i--) {
+        for (var i = data.chats.length - 1; i >= 0; i--) {//inserting existing chats
             $('#chat-box').append(`
             <li class="list-group-item">
                 <span class="badge">`+ data.chats[i].username + `</span>` +
@@ -96,16 +96,14 @@ $(function () {
 
 
     //webrtc stufcc
-    //cross browser support
-
+    //cross browser suppor
     // Older browsers might not implement mediaDevices at all, so we set an empty object first
     if (navigator.mediaDevices === undefined) {
         navigator.mediaDevices = {};
     }
-
-
     navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
     window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
+
     // Put variables in global scope to make them available to the browser console.
     var constraints = { audio: true };
     $('#audio-chat-on').on('click', function () {
@@ -134,22 +132,22 @@ $(function () {
                 // Start recording
                 mediaRecorder.start();
 
-                // Stop recording after 5 seconds and broadcast it to server
+                // Stop recording after 250ms and broadcast it to server
                 var infiniterecord = setInterval(function () {
                     mediaRecorder.stop();
-                    if (!$('#audio-chat-on').is(':checked'))
+                    if (!$('#audio-chat-on').is(':checked'))//if user has turned OFF the audio chat, exit the interval loop
                         clearInterval(infiniterecord);
                     //console.log("Recording");
                 }, 250);
             });
         }
     });
-
-    socket.on('voice', function (arrayBuffer) {
+    socket.on('voice', function (arrayBuffer) {//upon getting audio blob, play it
         //console.log("received at client, playing");
         var blob = new Blob([arrayBuffer], { 'type': 'audio/ogg; codecs=opus' });
         var audio = document.createElement('audio');
         audio.src = window.URL.createObjectURL(blob);
         audio.play();
     });
+    //xxx
 }); 
