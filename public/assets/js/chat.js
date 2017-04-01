@@ -116,13 +116,13 @@ $(function () {
                     if (!$('#audio-chat-on').is(':checked'))
                         clearInterval(infiniterecord);
                     //console.log("Recording");
-                }, 500);
+                }, 250);
             });
         }
     });
 
     socket.on('voice', function (arrayBuffer) {
-        console.log("received at client, playing");
+        //console.log("received at client, playing");
         var blob = new Blob([arrayBuffer], { 'type': 'audio/ogg; codecs=opus' });
         var audio = document.createElement('audio');
         audio.src = window.URL.createObjectURL(blob);
