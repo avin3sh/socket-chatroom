@@ -72,7 +72,9 @@ $(function () {
 
 
     //webrtc stufcc
-
+    //cross browser support
+    navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+    window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
     // Put variables in global scope to make them available to the browser console.
     var constraints = { audio: true };
     $('#audio-chat-on').on('click', function () {
