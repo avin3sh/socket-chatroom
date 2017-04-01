@@ -20,24 +20,28 @@ module.exports = function (io, Chats, Cookie, Userscount, Chatroom) {//stores  i
 
         //defines what happens when a user joins a room for the first time and chat.js client controller sends 'join room' event 
         socket.on('join room', function (data) {
+            console.log('room register request received ' + data.roomname);
             if (data.roomname !== undefined) {//since we don't call "joi room" function explicitly, it would be called even when it not actually a valid request, and in that case undefined would be returned (even when user is not logged in and is on login page. Because we are including socket.js even on login page)
                 cookies = Cookie.parse(socket.handshake.headers.cookie);//Parses socket handshake cookie info
-            }
-            console.log('room register request received ' + data.roomname);
-            if (data.roomname !== undefined) {
-                socket.join(data.roomname);//registers the user in the room it asked for
-                Userscount({ username: cookies.username, room: data.roomname, time: Date() }).save(function (err, data) {
-                    if (err) console.log(err);
-                    console.log(cookies.username + " added in the db");
-                });//Insert a record in userscount collection when a user enter a room(to show number of active users in a room)
-
-                //since user is entering first time, he also needs list of people already in the room
-                Userscount.find({ room: data.roomname }).sort({ time: 1 }).exec(function (err, data) {
-                    socket.emit('sidebar-data-firstload', data);
+                Userscount.count({ username: cookies.username, room: data.roomname }, function (err, dbdata) {//checks if user is already in the same room
+                    if (dbdata === 1) {//if user is already in the same room
+                        socket.emit("error-popup", { msg: "You are already in this room" });
+                    } else {
+                        Chats.find({ room: data.roomname }).sort({ time: -1 }).limit(7).exec(function (err, chatsdbdata) {//shows last 7 records
+                                socket.emit('populate-room',{roomname: data.roomname, chats: chatsdbdata, cookieusername: cookies.username});
+                        });
+                        socket.join(data.roomname);//registers the user in the room it asked for
+                        Userscount({ username: cookies.username, room: data.roomname, time: Date() }).save(function (err, data) {
+                            if (err) console.log(err);
+                            console.log(cookies.username + " added in the db");
+                        });//Insert a record in userscount collection when a user enter a room(to show number of active users in a room)
+                        //since user is entering first time, he also needs list of people already in the room
+                        Userscount.find({ room: data.roomname }).sort({ time: 1 }).exec(function (err, data) {
+                            socket.emit('sidebar-data-firstload', data);
+                        });
+                        io.to(data.roomname).emit('user-joined', { username: cookies.username });//sends name of the user to all the clients of the room when the user joins
+                    }
                 });
-
-                io.to(data.roomname).emit('user-joined', { username: cookies.username });//sends name of the user to all the clients of the room when the user joins
-
             }//registers the client with the room it entered
         });
         //xxx
@@ -75,7 +79,7 @@ module.exports = function (io, Chats, Cookie, Userscount, Chatroom) {//stores  i
 
 
         //implementing webrtc
-        socket.on('radio', function (blob,data) {
+        socket.on('radio', function (blob, data) {
             console.log("received at server, emitting to client");
             socket.broadcast.to(data.roomname).emit('voice', blob);
         });

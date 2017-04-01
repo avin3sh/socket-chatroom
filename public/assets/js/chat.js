@@ -12,6 +12,24 @@ $(function () {
     }
     //xxx
 
+    //populates room
+    socket.on('populate-room', function (data) {
+        console.log("received data " + data.roomname);
+        $('#room-title').append("Welcome to " + data.roomname);
+        var cookieusername = data.cookieusername;
+        $('#sendUsername').attr('value', cookieusername);
+        for (var i = data.chats.length - 1; i >= 0; i--) {
+            $('#chat-box').append(`
+            <li class="list-group-item">
+                <span class="badge">`+ data.chats[i].username + `</span>` +
+                data.chats[i].message + `
+                            </li>
+                            `);
+        }
+        autoscroll();
+    });
+    //xxx
+
     //Defines the function which will be executed every time a message has to be sent to the server
     var emitFunction = function () {
         if ($.trim($('#sendMsgfield').val()) !== "" || $.trim($('#sendMsgfield').val()) !== "") {
@@ -25,6 +43,12 @@ $(function () {
         return false;
     };
     //xxx
+
+    //handles error messsages
+    socket.on('error-popup', function (data) {
+        alert(data.msg);
+    });
+    //
 
     //Handles event which triggers sending of the message to the server, either once enter key is pressed or sent button is clicked
     $('#sendMsgButton').on('click', function () { emitFunction(); });
