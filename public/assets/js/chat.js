@@ -75,32 +75,41 @@ $(function () {
 
     // Put variables in global scope to make them available to the browser console.
     var constraints = { audio: true };
+    $('#audio-chat-on').on('click', function () {
+        if ($('#audio-chat-on').is(':checked')) {
+            navigator.mediaDevices.getUserMedia(constraints).then(function (mediaStream) {
+                var mediaRecorder = new MediaRecorder(mediaStream);
+                mediaRecorder.onstart = function (e) {
+                    this.chunks = [];
+                };
+                mediaRecorder.ondataavailable = function (e) {
+                    this.chunks.push(e.data);
+                };
+                mediaRecorder.onstop = function (e) {
+                    var blob = new Blob(this.chunks, { 'type': 'audio/ogg; codecs=opus' });
 
-    $('#toggle-rtc').on('click', function () {
-        navigator.mediaDevices.getUserMedia(constraints).then(function (mediaStream) {
-            var mediaRecorder = new MediaRecorder(mediaStream);
-            mediaRecorder.onstart = function (e) {
-                this.chunks = [];
-            };
-            mediaRecorder.ondataavailable = function (e) {
-                this.chunks.push(e.data);
-            };
-            mediaRecorder.onstop = function (e) {
-                var blob = new Blob(this.chunks, { 'type': 'audio/ogg; codecs=opus' });
-                socket.emit('radio', blob, { roomname: $('#sendChatroomName').val() });
-                console.log("Emitting to server");
+                    if ($('#audio-chat-on').is(':checked')) {
+                        socket.emit('radio', blob, { roomname: $('#sendChatroomName').val() });
+                        mediaRecorder.start();
+                        console.log("Emitting to server");
+                    } else {
+                        //mediaRecorder.stop();
+                        socket.emit('radio', blob, { roomname: $('#sendChatroomName').val() });//send the last chunk
+                    }
+                };
+
+                // Start recording
                 mediaRecorder.start();
 
-            };
-
-            // Start recording
-            mediaRecorder.start();
-
-            // Stop recording after 5 seconds and broadcast it to server
-            setInterval(function () {
-                mediaRecorder.stop()
-            }, 1000);
-        });
+                // Stop recording after 5 seconds and broadcast it to server
+                var infiniterecord = setInterval(function () {
+                    mediaRecorder.stop();
+                    if (!$('#audio-chat-on').is(':checked'))
+                        clearInterval(infiniterecord);
+                    console.log("Recording");
+                }, 1000);
+            });
+        }
     });
 
     socket.on('voice', function (arrayBuffer) {

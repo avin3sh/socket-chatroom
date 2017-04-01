@@ -39,20 +39,24 @@
 
             <ul class="list-group chatroom-sidebar">
                 <div class="panel panel-danger" id="chatroom-panel">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Audio Chat</h3>
+                    <div class="panel-heading" id="conference-options-panel">
+                        <h3 class="panel-title">Conferencing Options</h3>
                     </div>
                     <div class="panel-body">
-                        <a href="#" class="btn btn-danger" id="toggle-rtc">Enable</a>
+                        <div id="audio-conference-panel list-group-item">
+                        <span class="btn btn-danger">Audio Chat</span>
+                                <input name="optionsRadios" id="audio-chat-on" value="option1" type="radio" />ON
+                                <input name="optionsRadios" id="audio-chat-off" value="option2"  checked="" type="radio" /> OFF
+                        </div>
                     </div>
                 </div>
 
-                
+
             </ul>
         </div>
     </div>
     <!-- middle area end -->
-    <audio id="gum-local" controls autoplay></audio>
+    <audio  id="gum-local"  autoplay></audio>
 
     <% include footer %>
         <!--<script src="/assets/js/rtc.js"></script>-->
