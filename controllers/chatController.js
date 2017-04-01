@@ -66,7 +66,7 @@ module.exports = function (app, io, Cookie) {
         if (!cookie) {
             res.send(`<a href="/">Click here</a> to login`);
         } else {
-            Chats.find({ room: req.body.roomname }).sort({ time: 1 }).exec(function (err, data) {
+            Chats.find({ room: req.body.roomname }).sort({ time: -1}).limit(7).exec(function (err, data) {//shows last 7 records
                 var roomejsmetadata = { title: 'Welcome to the ' + req.body.roomname + ' chat room' };
                 if (err) throw err;
                 res.render('chatroom', { meta: roomejsmetadata, postdata: req.body, chatdata: data });
