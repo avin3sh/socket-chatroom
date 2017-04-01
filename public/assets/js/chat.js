@@ -73,6 +73,13 @@ $(function () {
 
     //webrtc stufcc
     //cross browser support
+
+    // Older browsers might not implement mediaDevices at all, so we set an empty object first
+    if (navigator.mediaDevices === undefined) {
+        navigator.mediaDevices = {};
+    }
+
+
     navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
     window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
     // Put variables in global scope to make them available to the browser console.
@@ -93,7 +100,7 @@ $(function () {
                     if ($('#audio-chat-on').is(':checked')) {
                         socket.emit('radio', blob, { roomname: $('#sendChatroomName').val() });
                         mediaRecorder.start();
-                        console.log("Emitting to server");
+                        //console.log("Emitting to server");
                     } else {
                         //mediaRecorder.stop();
                         socket.emit('radio', blob, { roomname: $('#sendChatroomName').val() });//send the last chunk
@@ -108,8 +115,8 @@ $(function () {
                     mediaRecorder.stop();
                     if (!$('#audio-chat-on').is(':checked'))
                         clearInterval(infiniterecord);
-                    console.log("Recording");
-                }, 1000);
+                    //console.log("Recording");
+                }, 500);
             });
         }
     });
