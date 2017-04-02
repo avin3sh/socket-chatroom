@@ -109,12 +109,20 @@ $(function () {
     $('#audio-chat-on').on('click', function () {
         if ($('#audio-chat-on').is(':checked')) {
             navigator.mediaDevices.getUserMedia(constraints).then(function (mediaStream) {
-                var mediaRecorder = new MediaRecorder(mediaStream);
+
+                var options = { audioBitsPerSecond: 32000 };
+
+                var mediaRecorder = new MediaRecorder(mediaStream, options);
                 mediaRecorder.onstart = function (e) {
                     this.chunks = [];
                 };
                 mediaRecorder.ondataavailable = function (e) {
                     this.chunks.push(e.data);
+                    /*
+                    var chunk = [];
+                    chunk.push(e.data);
+                    var blob2 = new Blob(chunk, { 'type': 'audio/ogg; codecs=opus' });
+                    socket.emit('radio-binary', blob2, { roomname: $('#sendChatroomName').val() });*/
                 };
                 mediaRecorder.onstop = function (e) {
                     var blob = new Blob(this.chunks, { 'type': 'audio/ogg; codecs=opus' });
@@ -134,16 +142,17 @@ $(function () {
 
                 // Stop recording after 250ms and broadcast it to server
                 var infiniterecord = setInterval(function () {
+                    console.log("Bitrate: " + mediaRecorder.audioBitsPerSecond);
                     mediaRecorder.stop();
                     if (!$('#audio-chat-on').is(':checked'))//if user has turned OFF the audio chat, exit the interval loop
                         clearInterval(infiniterecord);
                     //console.log("Recording");
-                }, 250);
+                }, 512);
             });
         }
     });
     socket.on('voice', function (arrayBuffer) {//upon getting audio blob, play it
-        //console.log("received at client, playing");
+        console.log("received at client, playing");
         var blob = new Blob([arrayBuffer], { 'type': 'audio/ogg; codecs=opus' });
         var audio = document.createElement('audio');
         audio.src = window.URL.createObjectURL(blob);

@@ -27,7 +27,7 @@ module.exports = function (io, Chats, Cookie, Userscount, Chatroom) {//stores  i
                     if (dbdata === 1) {//if user is already in the same room
                         socket.emit("error-popup", { msg: "You are already in this room" });//we don't want multiple entry points to the same room as it would show the user in the sidebar multiple times(also multiple emits)
                     } else {
-                        Chats.find({ room: data.roomname }).sort({ time: -1 }).limit(7).exec(function (err, chatsdbdata){//shows last 7 records
+                        Chats.find({ room: data.roomname }).sort({ time: -1 }).limit(7).exec(function (err, chatsdbdata) {//shows last 7 records
                             socket.emit('populate-room', { roomname: data.roomname, chats: chatsdbdata, cookieusername: cookies.username });//populate room emit will provide the emty chatroom template the data of all the chats as well as the username of the current logged in username(which goes into a hidden input field)
                         });
                         socket.join(data.roomname);//registers the user in the room it asked for
@@ -59,24 +59,25 @@ module.exports = function (io, Chats, Cookie, Userscount, Chatroom) {//stores  i
 
         //function to provide number of users in a chatroom on chatroomlist page
         socket.on('get-room-count', function () {//get-room-count is sent by client when its on main chatroom-list.ejs page
-            cookies = Cookie.parse(socket.handshake.headers.cookie);//parsing cookies
-            Chatroom.find({}, function (err, data) {//we search for db for ALL the rooms
-                var roomcount;
-                var roomobj;
-                var roomsarray = [];
-                for (var i = 0; i < data.length; i++) {//then for each room we run a for loop 
-                    roomcount = io.sockets.adapter.rooms[data[i].name];//this method gives us number of clients in a room
-                    if (roomcount === undefined) {//if room has no client, undefined would be returned, in that case 
-                        roomcount = [];//we would want to send a zero 
+            if (socket.handshake.headers.cookie !== undefined) {
+                cookies = Cookie.parse(socket.handshake.headers.cookie);//parsing cookies
+                Chatroom.find({}, function (err, data) {//we search for db for ALL the rooms
+                    var roomcount;
+                    var roomobj;
+                    var roomsarray = [];
+                    for (var i = 0; i < data.length; i++) {//then for each room we run a for loop 
+                        roomcount = io.sockets.adapter.rooms[data[i].name];//this method gives us number of clients in a room
+                        if (roomcount === undefined) {//if room has no client, undefined would be returned, in that case 
+                            roomcount = [];//we would want to send a zero 
+                        }
+                        roomobj = { roomname: data[i].name, count: roomcount.length };//then we create an object with roomname and count of users inside that room, for the given room
+                        roomsarray.push(roomobj);//and push that object to the array of rooms
                     }
-                    roomobj = { roomname: data[i].name, count: roomcount.length };//then we create an object with roomname and count of users inside that room, for the given room
-                    roomsarray.push(roomobj);//and push that object to the array of rooms
-                }
-                socket.emit('set-room-count', { data: roomsarray, username: cookies.username });//we send the client a data var containing array of room info and a username var containing parsed username from socket handshake
-            });
+                    socket.emit('set-room-count', { data: roomsarray, username: cookies.username });//we send the client a data var containing array of room info and a username var containing parsed username from socket handshake
+                });
+            }
         });
         //xxx
-
 
         //implementing webrtc
         socket.on('radio', function (blob, data) {//just broadcasts the incoming audio blob to all the users in the originating room with a delay
